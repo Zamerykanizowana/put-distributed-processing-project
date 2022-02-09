@@ -9,10 +9,10 @@ typedef enum {
 	REL_PSYCHIC,
 	ACK,
 	NACK
-} msg_tag
+} msg_tag;
 
 typedef struct general_msg {
 	int clk;
-}
+} general_msg;
 
 #endif
