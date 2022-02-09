@@ -3,7 +3,8 @@
 
 //TODO: establish whether we need REL_SHOP
 typedef enum {
-	REQ_SHOP,
+	REQ_STORE,
+	REL_STORE,
 	REQ_PSYCHIC,
 	REL_PSYCHIC,
 	ACK,
