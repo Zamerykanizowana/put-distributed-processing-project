@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "log.h"
 #include "tourist.h"
+#include "msg.h"
 #define ROOT 0
 #define MSG_TAG 100
 
@@ -15,11 +16,39 @@ void sigint_handler(int num) {
 }
 
 void main_event_loop() {
+	// TODO: send initial message.
 	int i = 0;
 
 	while (1) {
-		log_info("%d is loopin' and sleepin': %d", T.rank, i);
-		sleep(1);
+		log_info("%d is loopin': %d", T.rank, i);
+
+		while (1) {
+			general_msg incoming_msg;
+			MPI_Status status;
+
+			// Blocking receive.
+			MPI_Recv(&incoming_msg,
+					sizeof(general_msg),
+					MPI_BYTE,
+					MPI_ANY_SOURCE,
+					MPI_ANY_TAG,
+					MPI_COMM_WORLD,
+					&status
+				);
+
+			switch (status.MPI_TAG) {
+				case REQ_STORE:
+					break;
+				case ACK:
+					break;
+				case NACK:
+					break;
+				default:
+					log_error("Unknown message tag %d", status.MPI_TAG);
+					break;
+			}
+		}
+
 		i++;
 	}
 }
