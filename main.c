@@ -19,9 +19,7 @@ void main_event_loop() {
 	// TODO: send initial message.
 	int i = 0;
 
-	log_info("[%d] will send initial messages", T.rank);
 	enter_store();
-	log_info("[%d] is done with sending initial messages", T.rank);
 
 	while (1) {
 		log_info("%d is loopin': %d", T.rank, i);
@@ -63,8 +61,6 @@ int main(int argc, char **argv) {
 
 	MPI_Comm_size(MPI_COMM_WORLD, &T.size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &T.rank);
-
-	log_info("id %d/%d", T.size, T.rank);
 
 	print_size_rank();
 

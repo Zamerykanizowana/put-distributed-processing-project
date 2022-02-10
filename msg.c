@@ -17,14 +17,13 @@ void print_size_rank() {
 }
 
 void send_to_all(general_msg msg, msg_tag tag) {
-	log_info("Send to all (total %d) called with tag %d", T.size, tag);
 	for (int i = 0; i < T.size; i++) {
 		// Don't send message to self.
 		if (i == T.rank) {
 			continue;
 		}
 
-		log_info("[%d] sending %d to %d", T.rank, tag, i);
+		log_debug("[%d] sending %d to %d", T.rank, tag, i);
 
 		MPI_Send(&msg,
 				sizeof(general_msg),
