@@ -15,4 +15,8 @@ typedef struct general_msg {
 	int clk;
 } general_msg;
 
+void send_to_all(general_msg msg, msg_tag tag);
+void print_size_rank();
+void enter_store();
+
 #endif

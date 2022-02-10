@@ -19,34 +19,37 @@ void main_event_loop() {
 	// TODO: send initial message.
 	int i = 0;
 
+	log_info("[%d] will send initial messages", T.rank);
+	enter_store();
+	log_info("[%d] is done with sending initial messages", T.rank);
+
 	while (1) {
 		log_info("%d is loopin': %d", T.rank, i);
 
-		while (1) {
-			general_msg incoming_msg;
-			MPI_Status status;
+		general_msg incoming_msg;
+		MPI_Status status;
 
-			// Blocking receive.
-			MPI_Recv(&incoming_msg,
-					sizeof(general_msg),
-					MPI_BYTE,
-					MPI_ANY_SOURCE,
-					MPI_ANY_TAG,
-					MPI_COMM_WORLD,
-					&status
-				);
+		// Blocking receive.
+		MPI_Recv(&incoming_msg,
+				sizeof(general_msg),
+				MPI_BYTE,
+				MPI_ANY_SOURCE,
+				MPI_ANY_TAG,
+				MPI_COMM_WORLD,
+				&status
+			);
 
-			switch (status.MPI_TAG) {
-				case REQ_STORE:
-					break;
-				case ACK:
-					break;
-				case NACK:
-					break;
-				default:
-					log_error("Unknown message tag %d", status.MPI_TAG);
-					break;
-			}
+		switch (status.MPI_TAG) {
+			case REQ_STORE:
+				log_info("REQ_STORE received!");
+				break;
+			case ACK:
+				break;
+			case NACK:
+				break;
+			default:
+				log_error("Unknown message tag %d", status.MPI_TAG);
+				break;
 		}
 
 		i++;
@@ -62,6 +65,8 @@ int main(int argc, char **argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &T.rank);
 
 	log_info("id %d/%d", T.size, T.rank);
+
+	print_size_rank();
 
 	main_event_loop();
 }
