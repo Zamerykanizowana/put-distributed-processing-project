@@ -1,3 +1,4 @@
+#include <mpi.h>
 #include "msg.h"
 #include "tourist.h"
 
@@ -8,4 +9,21 @@ int incoming_event_happened_before(int incoming_clk, int incoming_rank) {
 			(T.clk == incoming_clk && 
 			 incoming_rank < T.rank)
 	       );
+}
+
+void send_to_all(general_msg msg, msg_tag tag) {
+	for (int i = 0; i < T.size; i++) {
+		// Don't send message to self.
+		if (i == T.rank) {
+			continue;
+		}
+
+		MPI_Send(&msg,
+				sizeof(general_msg),
+				MPI_BYTE,
+				i,
+				tag,
+				MPI_COMM_WORLD
+			);
+	}
 }
