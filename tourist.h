@@ -8,7 +8,7 @@ typedef enum {
 	TRIPPING
 } state_t;
 
-static struct tourist {
+typedef struct tourist {
 	// MPI-determined variables
 	int rank;
 	int size;
@@ -16,6 +16,8 @@ static struct tourist {
 	int clk;
 	// A State of Tourist
 	state_t state;
-} T;
+} tourist;
+
+extern tourist T;
 
 #endif
