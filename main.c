@@ -6,6 +6,7 @@
 #include "log.h"
 #include "tourist.h"
 #include "msg.h"
+#include "handlers.h"
 #define ROOT 0
 #define MSG_TAG 100
 
@@ -37,13 +38,18 @@ void main_event_loop() {
 				&status
 			);
 
+		log_info("%d received a message from %d", T.rank, status.MPI_SOURCE);
+
 		switch (status.MPI_TAG) {
 			case REQ_STORE:
 				log_info("REQ_STORE received!");
+				handle_req_store(status.MPI_SOURCE, incoming_msg);
 				break;
 			case ACK:
+				log_info("ACK received!");
 				break;
 			case NACK:
+				log_info("NACK received!");
 				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
