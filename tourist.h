@@ -22,9 +22,14 @@ typedef struct tourist {
 	tourist_state state;
 	// Number of responses received from other nodes
 	int responses;
+	// Resource-related variables
 	world_resources *res;
+	int free_store_slots;
+	int total_store_slots;
 } tourist;
 
 extern tourist T;
 
+void T_enter_store(int tourist);
+void T_leave_store(int tourist);
 #endif
