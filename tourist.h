@@ -6,7 +6,7 @@ typedef enum {
 	SHOPPING,
 	WAITING_FOR_PSYCHIC,
 	TRIPPING
-} state_t;
+} tourist_state;
 
 typedef struct tourist {
 	// MPI-determined variables
@@ -15,7 +15,9 @@ typedef struct tourist {
 	// Lamport timestamp
 	int clk;
 	// A State of Tourist
-	state_t state;
+	tourist_state state;
+	// Number of responses received from other nodes
+	int responses;
 } tourist;
 
 extern tourist T;

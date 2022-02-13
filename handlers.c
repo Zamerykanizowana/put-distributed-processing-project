@@ -20,3 +20,11 @@ void handle_req_store(int src, general_msg msg) {
 			MPI_COMM_WORLD
 		);
 }
+
+void handle_ack(int src, general_msg msg) {
+	T.responses++;
+}
+
+void handle_nack(int src, general_msg msg) {
+	T.responses++;
+}

@@ -23,10 +23,13 @@ void main_event_loop() {
 	enter_store();
 
 	while (1) {
-		log_info("%d is loopin': %d", T.rank, i);
+		log_info("%d is loopin': %d, responses: %d", T.rank, i, T.responses);
 
 		general_msg incoming_msg;
 		MPI_Status status;
+
+		log_info("%d will receive, might block till the end of times!",
+				T.rank);
 
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
@@ -47,9 +50,11 @@ void main_event_loop() {
 				break;
 			case ACK:
 				log_info("ACK received!");
+				handle_ack(status.MPI_SOURCE, incoming_msg);
 				break;
 			case NACK:
 				log_info("NACK received!");
+				handle_nack(status.MPI_SOURCE, incoming_msg);
 				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
