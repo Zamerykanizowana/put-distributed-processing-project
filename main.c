@@ -65,20 +65,28 @@ void main_event_loop() {
 }
 
 int main(int argc, char **argv) {
+	// Register signal handler.
 	signal(SIGINT, sigint_handler);
 
 	MPI_Init(&argc, &argv);
 
+	// Gather information about process count and pool size.
 	MPI_Comm_size(MPI_COMM_WORLD, &T.size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &T.rank);
 
+	// This is just a test function to see if a global variable
+	// that was declared in other file and modified by code in this file
+	// behaves properly (i.e. the modification has propagated).
 	print_size_rank();
 
+	// Initialize resources list for storing local bits of information
+	// about other processes.
 	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
 	for (int i = 0; i < T.size; i++) {
 		world_resources res = {0};
 		T.res[i] = res;
 	}	
 
+	// The function below never exits.
 	main_event_loop();
 }
