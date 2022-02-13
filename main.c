@@ -17,7 +17,6 @@ void sigint_handler(int num) {
 }
 
 void main_event_loop() {
-	// TODO: send initial message.
 	int i = 0;
 
 	enter_store();
@@ -74,6 +73,12 @@ int main(int argc, char **argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &T.rank);
 
 	print_size_rank();
+
+	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
+	for (int i = 0; i < T.size; i++) {
+		world_resources res = {0};
+		T.res[i] = res;
+	}	
 
 	main_event_loop();
 }

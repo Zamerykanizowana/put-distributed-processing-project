@@ -8,6 +8,10 @@ typedef enum {
 	TRIPPING
 } tourist_state;
 
+typedef struct {
+	int store_claimed;
+} world_resources;
+
 typedef struct tourist {
 	// MPI-determined variables
 	int rank;
@@ -18,6 +22,7 @@ typedef struct tourist {
 	tourist_state state;
 	// Number of responses received from other nodes
 	int responses;
+	world_resources *res;
 } tourist;
 
 extern tourist T;
