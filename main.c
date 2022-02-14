@@ -30,6 +30,10 @@ void main_event_loop() {
 		log_info("%d will receive, might block till the end of times!",
 				T.rank);
 
+		log_info("%d state: %d", T.rank, T.state);
+		log_info("%d thinks %d/%d store slots are free", 
+				T.rank, T.free_store_slots, T.total_store_slots);	
+
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
 				sizeof(general_msg),
