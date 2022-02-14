@@ -72,17 +72,14 @@ void main_event_loop() {
 	enter_store();
 
 	while (1) {
-		log_info("%d is loopin': %d, responses: %d", T.rank, i, T.responses);
+		log_info("Loopin': %d, responses: %d", i, T.responses);
 
 		general_msg incoming_msg;
 		MPI_Status status;
 
-		log_info("%d will receive, might block till the end of times!",
-				T.rank);
-
-		log_info("%d state: %d", T.rank, T.state);
-		log_info("%d thinks %d/%d store slots are free", 
-				T.rank, T.free_store_slots, T.total_store_slots);	
+		log_info("State: %d", T.state);
+		log_info("I think that %d/%d store slots are free", 
+				T.free_store_slots, T.total_store_slots);	
 
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
@@ -94,7 +91,7 @@ void main_event_loop() {
 				&status
 			);
 
-		log_info("%d received a message from %d", T.rank, status.MPI_SOURCE);
+		log_info("Message received from %d", status.MPI_SOURCE);
 
 		switch (status.MPI_TAG) {
 			case REQ_STORE:
@@ -147,7 +144,7 @@ int main(int argc, char **argv) {
 	// Initialize resources list for storing local bits of information
 	// about other processes.
 	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
-	for (int i = 0; i < T.size; i++) {
+	for (int i = 1; i < T.size; i++) {
 		world_resources res = {0};
 		T.res[i] = res;
 	}	
@@ -162,7 +159,7 @@ int main(int argc, char **argv) {
 		logger_sink_event_loop();
 	} else {
 		log_set_quiet(1);
-		log_add_callback(send_log_Event, NULL, LOG_INFO);
+		log_add_callback(send_log_Event, NULL, LOG_TRACE);
 		main_event_loop();
 	}
 }
