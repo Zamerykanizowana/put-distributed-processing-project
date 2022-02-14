@@ -7,6 +7,7 @@ void handle_req_store(int src, general_msg msg) {
 
 	if (incoming_event_happened_before(msg.clk, src)) {
 		tag = ACK;
+		T_enter_store(src);
 	} else {
 		tag = NACK;
 	}
@@ -27,4 +28,5 @@ void handle_ack(int src, general_msg msg) {
 
 void handle_nack(int src, general_msg msg) {
 	T.responses++;
+	T_enter_store(src);
 }
