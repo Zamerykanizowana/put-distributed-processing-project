@@ -79,6 +79,9 @@ int main(int argc, char **argv) {
 	// behaves properly (i.e. the modification has propagated).
 	print_size_rank();
 
+	// Set initial state.
+	T.state = WAITING_FOR_STORE; 
+
 	// Initialize resources list for storing local bits of information
 	// about other processes.
 	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
@@ -86,6 +89,10 @@ int main(int argc, char **argv) {
 		world_resources res = {0};
 		T.res[i] = res;
 	}	
+
+	// TODO: HARD-CODED ENVIRONMENT!!!
+	T.total_store_slots = 2;
+	T.free_store_slots = T.total_store_slots;
 
 	// The function below never exits.
 	main_event_loop();
