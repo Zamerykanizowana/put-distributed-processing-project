@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <time.h>
 #include "log.h"
 #include "tourist.h"
 #include "msg.h"
@@ -10,10 +12,58 @@
 #define ROOT 0
 #define MSG_TAG 100
 
+// BEGIN LOGGING-RELATED STRUCTS/FUNCS
+// TODO: move to external file
+const int LOGGER_TAG = 666;
+
+static const char *level_strings[] = {
+  "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+};
+
+static const char *level_colors[] = {
+  "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
+};
+
+static void send_log_Event(log_Event *ev) {
+	char buf[16];
+	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+
+	char fmt_buf[128];
+	char final_buf[256];
+
+	vsprintf(fmt_buf, ev->fmt, ev->ap);
+
+	sprintf(
+			final_buf, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m %s",
+			buf, level_colors[ev->level], level_strings[ev->level],
+			ev->file, ev->line, fmt_buf);
+
+	MPI_Send(final_buf, 
+			sizeof(char)*256, 
+			MPI_CHAR, 
+			0, 
+			LOGGER_TAG, 
+			MPI_COMM_WORLD);
+}
+
+// END LOGGING-RELATED STRUCTS/FUNCS
+
 void sigint_handler(int num) {
 	log_info("%d is closing...", T.rank);
 
 	MPI_Finalize();
+}
+
+void logger_sink_event_loop() {
+	while (1) {
+		char msg[256];
+		MPI_Status status;
+
+		MPI_Recv(msg, sizeof(char)*256, MPI_CHAR, MPI_ANY_SOURCE, 
+				LOGGER_TAG, MPI_COMM_WORLD, &status);
+
+		printf("[%d] %s\n", status.MPI_SOURCE, msg);
+	}
 }
 
 void main_event_loop() {
@@ -107,5 +157,12 @@ int main(int argc, char **argv) {
 	T.free_store_slots = T.total_store_slots;
 
 	// The function below never exits.
-	main_event_loop();
+	if (T.rank == 0) {
+		// Not the main loop.
+		logger_sink_event_loop();
+	} else {
+		log_set_quiet(1);
+		log_add_callback(send_log_Event, NULL, LOG_INFO);
+		main_event_loop();
+	}
 }
