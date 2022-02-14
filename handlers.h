@@ -5,4 +5,5 @@
 void handle_req_store(int src, general_msg msg);
 void handle_ack(int src, general_msg msg);
 void handle_nack(int src, general_msg msg);
+void handle_waiting_for_store_state(); 
 #endif

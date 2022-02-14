@@ -23,10 +23,36 @@ void handle_req_store(int src, general_msg msg) {
 }
 
 void handle_ack(int src, general_msg msg) {
-	T.responses++;
+	if (T.state == WAITING_FOR_STORE) {
+		T.responses++;
+	}
 }
 
 void handle_nack(int src, general_msg msg) {
-	T.responses++;
-	T_enter_store(src);
+	if (T.state == WAITING_FOR_STORE) {
+		T.responses++;
+	}
+
+	switch (T.state) {
+		case WAITING_FOR_STORE:
+			T_enter_store(src);
+			break;
+		default:
+			break;
+	}
+}
+
+void handle_waiting_for_store_state() {
+	// Process only once we've gathered responses from all nodes.
+	if (T.responses == T.size - 1) {
+		// Consume responses (empty the stomach).
+		T.responses = 0;
+		
+		if (T.free_store_slots > 0) {
+			T.clk++;
+			T.state = SHOPPING;
+		} else {
+			T.state = WAITING_FOR_STORE;
+		}
+	}
 }

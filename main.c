@@ -64,6 +64,14 @@ void main_event_loop() {
 				break;
 		}
 
+		switch (T.state) {
+			case WAITING_FOR_STORE:
+				handle_waiting_for_store_state();
+				break;
+			default:
+				break;
+		}
+
 		i++;
 	}
 }
