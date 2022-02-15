@@ -84,7 +84,6 @@ void *do_the_shopping(void *arg) {
 	release_store();
 
 	T.state = WAITING_FOR_STORE;
-	enter_store();
 
 	return NULL;
 }
