@@ -28,6 +28,7 @@ static const char *proc_emojis[] = {
 	"🧡", "💛", "💚", "💙", "💜", "🤎", "🖤", "🤍"
 };
 
+
 static void send_log_Event(log_Event *ev) {
 	char buf[16];
 	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
@@ -50,6 +51,10 @@ static void send_log_Event(log_Event *ev) {
 			MPI_COMM_WORLD);
 }
 
+static void kill_everyone(log_Event *ev) {
+	send_log_Event(ev);
+	MPI_Abort(MPI_COMM_WORLD, 3);
+}
 // END LOGGING-RELATED STRUCTS/FUNCS
 
 void sigint_handler(int num) {
@@ -165,6 +170,8 @@ int main(int argc, char **argv) {
 	// TODO: HARD-CODED ENVIRONMENT!!!
 	T.total_store_slots = 2;
 	T.free_store_slots = T.total_store_slots;
+
+	log_add_callback(kill_everyone, NULL, LOG_ERROR);
 
 	// The function below never exits.
 	if (T.rank == 0) {
