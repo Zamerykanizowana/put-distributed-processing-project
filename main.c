@@ -98,6 +98,9 @@ void main_event_loop() {
 				log_info("REQ_STORE received!");
 				handle_req_store(status.MPI_SOURCE, incoming_msg);
 				break;
+			case REL_STORE:
+				log_info("REL_STORE received!");
+				handle_release_store(status.MPI_SOURCE);
 			case ACK:
 				log_info("ACK received!");
 				handle_ack(status.MPI_SOURCE, incoming_msg);
@@ -115,7 +118,11 @@ void main_event_loop() {
 			case WAITING_FOR_STORE:
 				handle_waiting_for_store_state();
 				break;
+			case SHOPPING:
+				log_info("I'm in the state of shopping!");
+				break;
 			default:
+				log_error("Unknown state %d", T.state);
 				break;
 		}
 

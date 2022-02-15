@@ -19,5 +19,5 @@ int incoming_event_happened_before(int incoming_clk, int incoming_rank);
 void send_to_all(general_msg msg, msg_tag tag);
 void print_size_rank();
 void enter_store();
-
+void release_store();
 #endif

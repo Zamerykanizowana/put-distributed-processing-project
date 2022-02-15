@@ -39,3 +39,8 @@ void enter_store() {
 	general_msg msg = {T.clk};
 	send_to_all(msg, REQ_STORE);
 }
+
+void release_store() {
+	general_msg msg = {T.clk};
+	send_to_all(msg, REL_STORE); 
+}
