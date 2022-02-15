@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include "msg.h"
 #include "tourist.h"
+#include "log.h"
 
 void handle_req_store(int src, general_msg msg) {
 	int tag;
@@ -44,15 +45,18 @@ void handle_nack(int src, general_msg msg) {
 
 void handle_waiting_for_store_state() {
 	// Process only once we've gathered responses from all nodes.
-	if (T.responses == T.size - 1) {
+	if (T.responses == T.size - 2) {
 		// Consume responses (empty the stomach).
 		T.responses = 0;
 		
 		if (T.free_store_slots > 0) {
 			T.clk++;
 			T.state = SHOPPING;
+			T_enter_store(T.rank);
+			log_info("I'm shopping now!");
 		} else {
 			T.state = WAITING_FOR_STORE;
+			log_info("Grr, I have to wait...");
 		}
 	}
 }
