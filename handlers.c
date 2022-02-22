@@ -11,9 +11,11 @@ void handle_req_store(int src, general_msg msg) {
 	int tag;
 
 	if (incoming_event_happened_before(msg.clk, src)) {
+		log_info("sending ACK to %d", src);
 		tag = ACK;
 		T_enter_store(src);
 	} else {
+		log_info("sending NACK to %d", src);
 		tag = NACK;
 	}
 

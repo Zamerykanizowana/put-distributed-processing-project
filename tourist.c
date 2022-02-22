@@ -3,6 +3,12 @@
 
 tourist T;
 
+void T_print_res() {
+	for (int i = 1; i < T.size; i++) {
+		log_info("%d state might be %d", i, T.res[i].store_claimed);
+	}	
+}
+
 void T_enter_store(int tourist) {
 	if (T.res[tourist].store_claimed == 0) {
 		T.free_store_slots--;

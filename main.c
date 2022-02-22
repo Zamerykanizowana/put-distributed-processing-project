@@ -90,7 +90,8 @@ void main_event_loop() {
 
 		log_info("State: %d", T.state);
 		log_info("I think that %d/%d store slots are free", 
-				T.free_store_slots, T.total_store_slots);	
+				T.free_store_slots, T.total_store_slots);
+		T_print_res();	
 
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
