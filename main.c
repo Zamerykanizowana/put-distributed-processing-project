@@ -166,10 +166,19 @@ int main(int argc, char **argv) {
 	for (int i = 1; i < T.size; i++) {
 		world_resources res = {0};
 		T.res[i] = res;
-	}	
+	}
 
-	// TODO: HARD-CODED ENVIRONMENT!!!
-	T.total_store_slots = 2;
+	// Get environment variables.
+	const char *total_store_slots_env = getenv("STORE_SLOTS");	
+
+	// Set total store slots with fallback.
+	if (total_store_slots_env) {
+		T.total_store_slots = strtol(total_store_slots_env, NULL, 10);
+	} else {
+		T.total_store_slots = 2;
+	}
+
+	// Initialize free slots.
 	T.free_store_slots = T.total_store_slots;
 
 	log_add_callback(kill_everyone, NULL, LOG_ERROR);
