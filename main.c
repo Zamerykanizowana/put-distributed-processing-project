@@ -113,6 +113,7 @@ void main_event_loop() {
 			case REL_STORE:
 				log_info("REL_STORE received!");
 				handle_release_store(status.MPI_SOURCE);
+				break;
 			case ACK:
 				log_info("ACK received!");
 				handle_ack(status.MPI_SOURCE, incoming_msg);
