@@ -1,12 +1,19 @@
+#include <string.h>
 #include "tourist.h"
 #include "log.h"
 
 tourist T;
 
 void T_print_res() {
+	char l[128] = {'\0'};
+	char *l_ptr = l;
+
 	for (int i = 1; i < T.size; i++) {
-		log_info("%d state might be %d", i, T.res[i].store_claimed);
-	}	
+		l_ptr += sprintf(l_ptr, "P%d -- %d; ", 
+				i, T.res[i].store_claimed);
+	}
+
+	log_info(l);
 }
 
 void T_enter_store(int tourist) {
