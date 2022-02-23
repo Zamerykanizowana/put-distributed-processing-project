@@ -10,18 +10,30 @@
 void handle_req_store(int src, general_msg msg) {
 	int tag;
 
-	T.clk++;
-
-	// Check if process is in the shop
-	if (incoming_event_happened_before(msg.clk, src) && T.state != SHOPPING) {
-	//if (T.state == SHOPPING) {
-		log_info("Sending ACK to %d. My clk is %d", src, T.clk);
-		tag = ACK;
-		//T_enter_store(src);
+	
+	if (T.state == WAITING_FOR_STORE || T.state == SHOPPING) {
+		if (incoming_event_happened_before(msg.clk, src)) {
+			if (T.state == SHOPPING) {
+				tag = NACK;
+			} else {	
+				tag = ACK;
+				//T_enter_store(src);
+			}
+		} else {
+			tag = NACK;
+		}
 	} else {
-		log_info("Sending NACK to %d. My clk is %d", src, T.clk);
-		tag = NACK;
+		tag = ACK;
+		//T_enter_store(src);	
 	}
+
+	if (tag == ACK) {	
+		log_info("Sending ACK to %d. My clk is %d", src, T.clk);
+	} else {	
+		log_info("Sending NACK to %d. My clk is %d", src, T.clk);
+	}
+
+	//T.clk++;
 
 	general_msg new_msg = {T.clk};
 	MPI_Send(&new_msg,
@@ -45,11 +57,9 @@ void handle_ack(int src, general_msg msg) {
 void handle_nack(int src, general_msg msg) {
 	if (T.state == WAITING_FOR_STORE) {
 		T.responses++;
-		T.res[src].store_claimed = 1;
-		T.free_store_slots--;
 	}
 
-	//TODO for Ola - need to chack, what to do with that
+	//TODO for Ola - need to check, what to do with that
 	switch (T.state) {
 		case WAITING_FOR_STORE:
 			T_enter_store(src);
@@ -79,8 +89,10 @@ void handle_waiting_for_store_state() {
 			pthread_create(&glue_fan, NULL, do_the_shopping, NULL);
 		} else {
 			//T.state = WAITING_FOR_STORE;
-			log_info("Grr, I have to wait...");
+			log_info("Grr, I have to wait... but I have all responses");
 		}
+	} else {
+		log_info("Grr, I have to wait, I have only %d resp", T.responses);
 	}
 }
 
@@ -96,6 +108,8 @@ void *do_the_shopping(void *arg) {
 	release_store();
 
 	T.state = WAITING_FOR_STORE;
+
+	enter_store_req();
 
 	return NULL;
 }

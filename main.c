@@ -101,7 +101,7 @@ void main_event_loop() {
 				&status
 			);
 		
-		T.clk++;
+		//T.clk++;
 		//log_info("Message received from %d", status.MPI_SOURCE);
 
 		switch (status.MPI_TAG) {
