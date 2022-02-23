@@ -24,10 +24,10 @@ static const char *level_colors[] = {
   "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
 };
 
-static const char *proc_emojis[] = {
-	"🧡", "💛", "💚", "💙", "💜", "🤎", "🖤", "🤍"
+static const char *proc_colors[] = {
+	"", "\x1b[31m", "\x1b[32m", "\x1b[33m", "\x1b[34m", "\x1b[35m", "\x1b[36m",
+	"\x1b[31;1m", "\x1b[32;1m", "\x1b[33;1m", "\x1b[34;1m", "\x1b[35;1m", "\x1b[36;1m"
 };
-
 
 static void send_log_Event(log_Event *ev) {
 	char buf[16];
@@ -39,9 +39,9 @@ static void send_log_Event(log_Event *ev) {
 	vsprintf(fmt_buf, ev->fmt, ev->ap);
 
 	sprintf(
-			final_buf, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m %s",
+			final_buf, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m %s %s \x1b[0m",
 			buf, level_colors[ev->level], level_strings[ev->level],
-			ev->file, ev->line, fmt_buf);
+			ev->file, ev->line, proc_colors[T.rank], fmt_buf);
 
 	MPI_Send(final_buf, 
 			sizeof(char)*256, 
@@ -71,9 +71,7 @@ void logger_sink_event_loop() {
 		MPI_Recv(msg, sizeof(char)*256, MPI_CHAR, MPI_ANY_SOURCE, 
 				LOGGER_TAG, MPI_COMM_WORLD, &status);
 
-		printf("%s [%d] %s\n", proc_emojis[status.MPI_SOURCE],
-				status.MPI_SOURCE, msg
-				);
+		printf("\x1b[7m%s[%d]\x1b[0m %s\n", proc_colors[status.MPI_SOURCE], status.MPI_SOURCE, msg);
 	}
 }
 
