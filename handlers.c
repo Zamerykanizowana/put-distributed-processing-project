@@ -10,15 +10,17 @@
 void handle_req_store(int src, general_msg msg) {
 	int tag;
 
+	T.clk++;
+
 	// Check if process is in the shop
-	//if (incoming_event_happened_before(msg.clk, src)) {
-	if (T.state == SHOPPING) {
-		log_info("Sending NACK to %d. My clk is %d", src, T.clk);
-		tag = NACK;
-		//T_enter_store(src);
-	} else {
+	if (incoming_event_happened_before(msg.clk, src) && T.state != SHOPPING) {
+	//if (T.state == SHOPPING) {
 		log_info("Sending ACK to %d. My clk is %d", src, T.clk);
 		tag = ACK;
+		//T_enter_store(src);
+	} else {
+		log_info("Sending NACK to %d. My clk is %d", src, T.clk);
+		tag = NACK;
 	}
 
 	general_msg new_msg = {T.clk};

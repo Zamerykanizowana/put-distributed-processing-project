@@ -100,7 +100,8 @@ void main_event_loop() {
 				MPI_COMM_WORLD,
 				&status
 			);
-
+		
+		T.clk++;
 		//log_info("Message received from %d", status.MPI_SOURCE);
 
 		switch (status.MPI_TAG) {
