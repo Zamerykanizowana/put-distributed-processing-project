@@ -68,9 +68,17 @@ void handle_waiting_for_store_state() {
 			pthread_t glue_fan;
 			pthread_create(&glue_fan, NULL, do_the_shopping, NULL);
 		} else {
-			T.state = WAITING_FOR_STORE;
-			log_info("Grr, I have to wait...");
+			T.state = WAITING_FOR_FREE_STORE_SLOT;
+			log_info("Grr, I have to wait... ⌛⌛⌛");
 		}
+	}
+}
+
+void handle_waiting_for_free_store_slot() {
+	if (T.free_store_slots > 0) {
+		T.state = WAITING_FOR_STORE;
+		enter_store();
+		log_info("Store slots are available again, let's request one!");	
 	}
 }
 
@@ -85,7 +93,12 @@ void *do_the_shopping(void *arg) {
 
 	release_store();
 
-	T.state = WAITING_FOR_STORE;
+	if (T.free_store_slots > 0) {
+		T.state = WAITING_FOR_STORE;
+		enter_store();
+	} else {
+		T.state = WAITING_FOR_FREE_STORE_SLOT;
+	}
 
 	return NULL;
 }

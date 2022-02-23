@@ -131,6 +131,8 @@ void main_event_loop() {
 			case WAITING_FOR_STORE:
 				handle_waiting_for_store_state();
 				break;
+			case WAITING_FOR_FREE_STORE_SLOT:
+				handle_waiting_for_free_store_slot();
 			case SHOPPING:
 				log_info("I'm in the state of shopping!");
 				break;
