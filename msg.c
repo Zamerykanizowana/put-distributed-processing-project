@@ -23,7 +23,7 @@ void send_to_all(general_msg msg, msg_tag tag) {
 			continue;
 		}
 
-		log_debug("Sending %d to %d", tag, i);
+		log_debug("Sending %d to %d. My clk is %d", tag, i, msg.clk);
 
 		MPI_Send(&msg,
 				sizeof(general_msg),
@@ -35,7 +35,7 @@ void send_to_all(general_msg msg, msg_tag tag) {
 	}
 }
 
-void enter_store() {
+void enter_store_req() {
 	general_msg msg = {T.clk};
 	send_to_all(msg, REQ_STORE);
 }

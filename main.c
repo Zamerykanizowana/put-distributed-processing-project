@@ -80,10 +80,10 @@ void logger_sink_event_loop() {
 void main_event_loop() {
 	int i = 0;
 
-	enter_store();
+	enter_store_req();
 
 	while (1) {
-		log_info("Loopin': %d, responses: %d", i, T.responses);
+		log_info("Looping: %d, responses: %d", i, T.responses);
 
 		general_msg incoming_msg;
 		MPI_Status status;
@@ -103,23 +103,27 @@ void main_event_loop() {
 				&status
 			);
 
-		log_info("Message received from %d", status.MPI_SOURCE);
+		//log_info("Message received from %d", status.MPI_SOURCE);
 
 		switch (status.MPI_TAG) {
 			case REQ_STORE:
-				log_info("REQ_STORE received!");
+				log_info("REQ_STORE received from %d! Incoming clk %d, my clk %d", 
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_req_store(status.MPI_SOURCE, incoming_msg);
 				break;
 			case REL_STORE:
-				log_info("REL_STORE received!");
+				log_info("REL_STORE received from %d! Incoming clk %d, my clk %d", 
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_release_store(status.MPI_SOURCE);
 				break;
 			case ACK:
-				log_info("ACK received!");
+				log_info("ACK received from %d! Incoming clk %d, my clk %d", 
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_ack(status.MPI_SOURCE, incoming_msg);
 				break;
 			case NACK:
-				log_info("NACK received!");
+				log_info("NACK received from %d! Incoming clk %d, my clk %d", 
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_nack(status.MPI_SOURCE, incoming_msg);
 				break;
 			default:
