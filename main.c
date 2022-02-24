@@ -92,6 +92,9 @@ void main_event_loop() {
 				T.free_store_slots, T.total_store_slots);
 			T_print_res();	
 		//}
+		
+		T_print_res_psychic();
+
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
 				sizeof(general_msg),

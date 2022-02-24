@@ -47,15 +47,25 @@ void handle_req_store(int src, general_msg msg) {
 
 // src is process number (incoming p_id)
 void handle_ack(int src, general_msg msg) {
-	if (T.state == WAITING_FOR_STORE) {
+	if (T.state == WAITING_FOR_STORE || T.state == WAITING_FOR_STORE) {
 		T.responses++;
-		T.res[src].store_claimed = 0;
+	}
+
+	switch (T.state) {
+		case WAITING_FOR_STORE:
+			T.res[src].store_claimed = 0;
+			break;
+		case WAITING_FOR_PSYCHIC:
+			T.res_psychic[src].psychic_claimed = 0;
+			break;
+		default:
+			break;
 	}
 
 }
 
 void handle_nack(int src, general_msg msg) {
-	if (T.state == WAITING_FOR_STORE) {
+	if (T.state == WAITING_FOR_STORE || T.state == WAITING_FOR_PSYCHIC) {
 		T.responses++;
 	}
 
@@ -63,6 +73,9 @@ void handle_nack(int src, general_msg msg) {
 	switch (T.state) {
 		case WAITING_FOR_STORE:
 			T_enter_store(src);
+			break;
+		case WAITING_FOR_PSYCHIC:
+			//T_enter_psychic(src);
 			break;
 		default:
 			break;
@@ -109,7 +122,7 @@ void *do_the_shopping(void *arg) {
 
 	T.state = WAITING_FOR_PSYCHIC;
 
-	//enter_store_req();
+	enter_psychic_req();
 
 	return NULL;
 }
@@ -157,6 +170,8 @@ void handle_waiting_for_psychic() {
 		} else {
 			handle_waiting_for_trip();
 		}
+	} else {
+		log_info("I have only %d responses about psychic...", T.responses);
 	}
 
 }
