@@ -17,14 +17,14 @@ void handle_req_store(int src, general_msg msg) {
 				tag = NACK;
 			} else {	
 				tag = ACK;
-				//T_enter_store(src);
+				T_enter_store(src);
 			}
 		} else {
 			tag = NACK;
 		}
 	} else {
 		tag = ACK;
-		//T_enter_store(src);	
+		T_enter_store(src);	
 	}
 
 	if (tag == ACK) {	
@@ -107,9 +107,39 @@ void *do_the_shopping(void *arg) {
 
 	release_store();
 
-	T.state = WAITING_FOR_STORE;
+	T.state = WAITING_FOR_PSYCHIC;
 
-	enter_store_req();
+	//enter_store_req();
 
 	return NULL;
+}
+
+void handle_req_psychic(int src, general_msg msg) {
+	int tag;
+
+	if (T.state == WAITING_FOR_PSYCHIC) {
+		if (incoming_event_happened_before(msg.clk, src)) {
+			tag = ACK;
+			log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+			//T_enter_psychic(src) ??
+		} else {
+			tag = NACK;
+			log_info("Sending NACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+		}
+	} else {
+		tag = ACK;
+		log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+		//T_enter_psychic(src) ??
+	}
+
+	general_msg new_msg = {T.clk};
+	MPI_Send(&new_msg,
+			sizeof(new_msg),
+			MPI_BYTE,
+			src,
+			tag,
+			MPI_COMM_WORLD
+		);
+	
+	
 }

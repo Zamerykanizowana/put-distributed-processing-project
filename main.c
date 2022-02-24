@@ -81,16 +81,17 @@ void main_event_loop() {
 	enter_store_req();
 
 	while (1) {
-		log_info("Looping: %d, responses: %d", i, T.responses);
+		log_info("Looping: %d, responses about shop: %d", i, T.responses);
 
 		general_msg incoming_msg;
 		MPI_Status status;
 
 		log_info("State: %d", T.state);
-		log_info("I think that %d/%d store slots are free", 
+		//if (T.state == WAITING_FOR_STORE) {
+			log_info("I think that %d/%d store slots are free", 
 				T.free_store_slots, T.total_store_slots);
-		T_print_res();	
-
+			T_print_res();	
+		//}
 		// Blocking receive.
 		MPI_Recv(&incoming_msg,
 				sizeof(general_msg),
@@ -125,6 +126,11 @@ void main_event_loop() {
 					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_nack(status.MPI_SOURCE, incoming_msg);
 				break;
+			case REQ_PSYCHIC:
+				log_info("REQ_PSYCHIC received from %d! Incoming clk %d, my clk %d",
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
+				handle_req_psychic(status.MPI_SOURCE);
+				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
 				break;
@@ -136,6 +142,10 @@ void main_event_loop() {
 				break;
 			case SHOPPING:
 				log_info("I'm in the state of shopping!");
+				break;
+			case WAITING_FOR_PSYCHIC:
+				//handle_waiting_for_psychic();
+				log_info("Waiting for 🌑");
 				break;
 			default:
 				log_error("Unknown state %d", T.state);
