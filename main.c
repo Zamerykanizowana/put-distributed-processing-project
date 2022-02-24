@@ -129,7 +129,7 @@ void main_event_loop() {
 			case REQ_PSYCHIC:
 				log_info("REQ_PSYCHIC received from %d! Incoming clk %d, my clk %d",
 					status.MPI_SOURCE, incoming_msg.clk, T.clk);
-				handle_req_psychic(status.MPI_SOURCE);
+				handle_req_psychic(status.MPI_SOURCE, incoming_msg);
 				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
@@ -175,15 +175,26 @@ int main(int argc, char **argv) {
 	T.state = WAITING_FOR_STORE; 
 
 	// Initialize resources list for storing local bits of information
-	// about other processes.
+	// about other processes in queque for store
 	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
 	for (int i = 1; i < T.size; i++) {
 		world_resources res = {0};
 		T.res[i] = res;
 	}
 
+	// Initialize resources list for storing local bits of information
+	// about other pricesses in queque for psychic
+	T.res_psychic = (world_resources_psychic *) malloc(T.size * sizeof(world_resources_psychic));
+	for (int i = 1; i < T.size; i++) {
+		world_resources_psychic res_psychic = {0};
+		T.res_psychic[i] = res_psychic;
+	}
+
 	// Get environment variables.
-	const char *total_store_slots_env = getenv("STORE_SLOTS");	
+	const char *total_store_slots_env = getenv("STORE_SLOTS");
+
+	// Get enviorenment variables
+	const char *total_psychic_slots_env = getenv("PSYCHIC_SLOTS");	
 
 	// Set total store slots with fallback.
 	if (total_store_slots_env) {
@@ -192,8 +203,16 @@ int main(int argc, char **argv) {
 		T.total_store_slots = 2;
 	}
 
+	// Set total psychic slots with fallback
+	if (total_psychic_slots_env) {
+		T.total_psychic_slots = strtol(total_psychic_slots_env, NULL, 10);
+	} else {
+		T.total_psychic_slots = 2;
+	}
+
 	// Initialize free slots.
 	T.free_store_slots = T.total_store_slots;
+	T.when_break_needed = T.total_psychic_slots;
 
 	log_add_callback(kill_everyone, NULL, LOG_ERROR);
 

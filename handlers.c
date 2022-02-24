@@ -143,3 +143,47 @@ void handle_req_psychic(int src, general_msg msg) {
 	
 	
 }
+
+void handle_waiting_for_psychic() {
+	if (T.responses == T.size - 2) {
+		log_info("I have all responses about psychic!");
+		T.responses = 0;
+		T.clk++;
+		//T_enter_psychic(T.rank) ??
+		if (T.when_break_needed == 0) {
+			log_info("Psychic's break 😴");
+			pthread_t break_needed;
+			pthread_create(&break_needed, NULL, do_break, NULL);
+		} else {
+			handle_waiting_for_trip();
+		}
+	}
+
+}
+
+void *do_break(void *arg) {
+	int duration = 4;
+	log_info("Break takes %d seconds", duration);
+	sleep(duration);
+	log_info("Break done! 😴✅");
+	handle_waiting_for_trip();
+	return NULL;
+}
+
+void handle_waiting_for_trip() {
+	T.state = TRIPPING;
+	pthread_t trip_fan;
+	pthread_create(&trip_fan, NULL, do_the_trip, NULL);
+} 
+
+void *do_the_trip(void *arg) {
+	int duration = (rand() % (10 - 1 + 1)) + 1;
+	log_info("I want to spend %d seconds in tunnel", duration);
+	sleep(duration);
+	log_info("I'm ready to exit tunnel...");
+	return NULL;
+}
+
+
+
+
