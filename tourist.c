@@ -16,6 +16,17 @@ void T_print_res() {
 	log_info(l);
 }
 
+void T_print_res_psychic() {
+	char l[128] = {'\0'};
+	char *l_ptr = l;
+	for (int i = 1; i < T.size; i++) {
+		l_ptr += sprintf(l_ptr, "P%d_PS -- %d; ", i, T.res_psychic[i].psychic_claimed);
+	
+	}
+
+	log_infor(l);
+}
+
 void T_enter_store(int tourist) {
 	if (T.res[tourist].store_claimed == 0) {
 	//TODO for Ola - fix entering to store
