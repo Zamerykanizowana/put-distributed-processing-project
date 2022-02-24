@@ -45,4 +45,5 @@ void T_print_res();
 void T_print_res_psychic();
 void T_enter_store(int tourist);
 void T_leave_store(int tourist);
+void T_enter_psychic(int tourist);
 #endif
