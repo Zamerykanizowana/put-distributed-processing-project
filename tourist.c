@@ -27,6 +27,16 @@ void T_print_res_psychic() {
 	log_info(l);
 }
 
+void T_print_local_que() {
+	char l[128] = {'\0'};
+	char *l_ptr = l;
+	l_ptr += sprintf("My local que: ");
+	for (int i = 1; i < T.size; i++) {
+		l_ptr += sprintf(l_ptr, "P%d_Q -- %d; ", i, T.res_que[i].psychic_queque);
+	}
+	log_info(l);
+}
+
 void T_enter_store(int tourist) {
 	if (T.res[tourist].store_claimed == 0) {
 		T.free_store_slots--;
