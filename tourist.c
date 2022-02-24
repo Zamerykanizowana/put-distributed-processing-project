@@ -52,7 +52,7 @@ void T_leave_store(int tourist) {
 }
 
 void T_enter_psychic(int tourist) {
-	if (T.res_psychic[tourist].store_claimed == 0) {
+	if (T.res_psychic[tourist].psychic_claimed == 0) {
 		T.when_break_needed--;
 		
 	}
