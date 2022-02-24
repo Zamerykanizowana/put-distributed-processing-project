@@ -176,6 +176,10 @@ int main(int argc, char **argv) {
 	// Register signal handler.
 	signal(SIGINT, sigint_handler);
 
+	// Seed random number generator.
+	time_t t;
+	srand((unsigned) time(&t));
+
 	MPI_Init(&argc, &argv);
 
 	// Gather information about process count and pool size.
