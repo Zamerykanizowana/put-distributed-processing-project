@@ -133,15 +133,18 @@ void handle_req_psychic(int src, general_msg msg) {
 	if (T.state == WAITING_FOR_PSYCHIC) {
 		if (incoming_event_happened_before(msg.clk, src)) {
 			tag = ACK;
-			log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+			log_info("Sending ACK_PSYCHIC to %d. My clk is %d, my st is %d", 
+					src, T.clk, T.state);
 			T_enter_psychic(src);
 		} else {
 			tag = NACK;
-			log_info("Sending NACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+			log_info("Sending NACK_PSYCHIC to %d. My clk is %d, my st is %d", 
+					src, T.clk, T.state);
 		}
 	} else {
 		tag = ACK;
-		log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
+		log_info("Sending ACK_PSYCHIC to %d. My clk is %d, my st is %d", 
+				src, T.clk, T.state);
 		T_enter_psychic(src);
 	}
 
@@ -160,6 +163,12 @@ void handle_req_psychic(int src, general_msg msg) {
 void handle_waiting_for_psychic() {
 	if (T.responses == T.size - 2) {
 		log_info("I have all responses about psychic!");
+		// Save queque to local history
+		// To have info which process entred before
+		for (int i = 1; i < T.size; i++) {
+			T.res_que[i] = T.res_psychic[i];
+		}
+		T_print_local_que();
 		T.responses = 0;
 		T.clk++;
 		//T_enter_psychic(T.rank) ??
