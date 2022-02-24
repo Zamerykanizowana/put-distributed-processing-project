@@ -17,8 +17,8 @@ typedef struct {
 } world_resources_psychic;
 
 typedef struct {
-	int psychic_queque;
-} local_queque;
+	int psychic_queue;
+} local_queue;
 
 typedef struct tourist {
 	// MPI-determined variables
@@ -37,7 +37,7 @@ typedef struct tourist {
 	// If variable when_break_needed is 0, then process needs to wait until
 	// psychic finish break
 	world_resources_psychic *res_psychic;
-	local_queque *res_que;
+	local_queue *res_que;
 	int when_break_needed;
 	int total_psychic_slots;
 

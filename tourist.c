@@ -32,7 +32,7 @@ void T_print_local_que() {
 	char *l_ptr = l;
 	l_ptr += sprintf("My local que: ");
 	for (int i = 1; i < T.size; i++) {
-		l_ptr += sprintf(l_ptr, "P%d_Q -- %d; ", i, T.res_que[i].psychic_queque);
+		l_ptr += sprintf(l_ptr, "P%d_Q -- %d; ", i, T.res_que[i].psychic_queue);
 	}
 	log_info(l);
 }
