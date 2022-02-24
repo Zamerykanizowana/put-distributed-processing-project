@@ -81,7 +81,7 @@ void main_event_loop() {
 	enter_store_req();
 
 	while (1) {
-		log_info("Looping: %d, responses about shop: %d", i, T.responses);
+		log_info("Looping: %d, responses: %d", i, T.responses);
 
 		general_msg incoming_msg;
 		MPI_Status status;
@@ -107,6 +107,12 @@ void main_event_loop() {
 		
 		//T.clk++;
 		//log_info("Message received from %d", status.MPI_SOURCE);
+		
+		//char tmp[3] = "";
+
+		//if (T.state == WAITING_FOR_PSYCHIC) {
+		//	tmp[3] = "_PS";
+		//}
 
 		switch (status.MPI_TAG) {
 			case REQ_STORE:
@@ -147,8 +153,11 @@ void main_event_loop() {
 				log_info("I'm in the state of shopping!");
 				break;
 			case WAITING_FOR_PSYCHIC:
-				//handle_waiting_for_psychic();
 				log_info("Waiting for 🌑");
+				handle_waiting_for_psychic();
+				break;
+			case TRIPPING:
+				log_info("I'm surfing through the tunnel! 🏄");
 				break;
 			default:
 				log_error("Unknown state %d", T.state);

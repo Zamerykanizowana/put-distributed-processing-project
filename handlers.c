@@ -47,7 +47,7 @@ void handle_req_store(int src, general_msg msg) {
 
 // src is process number (incoming p_id)
 void handle_ack(int src, general_msg msg) {
-	if (T.state == WAITING_FOR_STORE || T.state == WAITING_FOR_STORE) {
+	if (T.state == WAITING_FOR_STORE || T.state == WAITING_FOR_PSYCHIC) {
 		T.responses++;
 	}
 
@@ -75,7 +75,7 @@ void handle_nack(int src, general_msg msg) {
 			T_enter_store(src);
 			break;
 		case WAITING_FOR_PSYCHIC:
-			//T_enter_psychic(src);
+			T_enter_psychic(src);
 			break;
 		default:
 			break;
@@ -134,7 +134,7 @@ void handle_req_psychic(int src, general_msg msg) {
 		if (incoming_event_happened_before(msg.clk, src)) {
 			tag = ACK;
 			log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
-			//T_enter_psychic(src) ??
+			T_enter_psychic(src);
 		} else {
 			tag = NACK;
 			log_info("Sending NACK_PSYCHIC to %d. My clk is %d", src, T.clk);
@@ -142,7 +142,7 @@ void handle_req_psychic(int src, general_msg msg) {
 	} else {
 		tag = ACK;
 		log_info("Sending ACK_PSYCHIC to %d. My clk is %d", src, T.clk);
-		//T_enter_psychic(src) ??
+		T_enter_psychic(src);
 	}
 
 	general_msg new_msg = {T.clk};
