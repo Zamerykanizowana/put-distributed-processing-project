@@ -21,11 +21,11 @@ void T_enter_store(int tourist) {
 		T.free_store_slots--;
 		T.res[tourist].store_claimed = 1;
 
-		if (tourist == T.rank) {
-			log_info("I have entered the store! 🏪👀");
-		} else {
-			log_info("%d has entered the store! 🏪", tourist);
-		}
+		//if (tourist == T.rank) {
+		//	log_info("I have entered the store! 🏪👀");
+		//} else {
+		//	log_info("%d has entered the store! 🏪", tourist);
+		//}
 	}
 }
 

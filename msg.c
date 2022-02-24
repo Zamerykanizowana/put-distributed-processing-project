@@ -17,6 +17,7 @@ void print_size_rank() {
 }
 
 void send_to_all(general_msg msg, msg_tag tag) {
+	T.clk++;
 	for (int i = 1; i < T.size; i++) {
 		// Don't send message to self.
 		if (i == T.rank) {

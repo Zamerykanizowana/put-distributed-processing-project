@@ -8,7 +8,7 @@ typedef enum {
 	REQ_PSYCHIC,
 	REL_PSYCHIC,
 	ACK,
-	NACK
+	NACK // This is never sent.
 } msg_tag;
 
 typedef struct general_msg {

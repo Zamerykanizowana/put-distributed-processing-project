@@ -2,15 +2,14 @@
 #define GATES_TOURIST_H
 
 typedef enum {
-	WAITING_FOR_STORE,
+	REQUESTING_STORE_SLOT,
 	WAITING_FOR_FREE_STORE_SLOT,
-	SHOPPING,
-	WAITING_FOR_PSYCHIC,
-	TRIPPING
+	OCCUPYING_STORE_SLOT,
 } tourist_state;
 
 typedef struct {
 	int store_claimed;
+	int is_deferred;
 } world_resources;
 
 typedef struct tourist {

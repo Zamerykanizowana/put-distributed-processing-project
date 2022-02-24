@@ -8,44 +8,38 @@
 #include "handlers.h"
 
 void handle_req_store(int src, general_msg msg) {
-	int tag;
+	int tag = NACK;
 
-	if (incoming_event_happened_before(msg.clk, src)) {
-		log_info("sending ACK to %d", src);
+	if (T.state != REQUESTING_STORE_SLOT) {
 		tag = ACK;
-		T_enter_store(src);
+	} else if (incoming_event_happened_before(msg.clk, src)) {
+		tag = ACK;
 	} else {
-		log_info("sending NACK to %d", src);
-		tag = NACK;
+		T.res[src].is_deferred = 1;
 	}
 
-	general_msg new_msg = {T.clk};
-	MPI_Send(&new_msg,
-			sizeof(new_msg),
-			MPI_BYTE,
-			src,
-			tag,
-			MPI_COMM_WORLD
-		);
+
+	if (tag == ACK) {
+		T.clk++;
+		general_msg new_msg = {T.clk};
+
+		log_info("Sending ACK to %d", src);
+
+		T_enter_store(src);
+
+		MPI_Send(&new_msg,
+				sizeof(new_msg),
+				MPI_BYTE,
+				src,
+				tag,
+				MPI_COMM_WORLD
+			);
+	}
 }
 
 void handle_ack(int src, general_msg msg) {
-	if (T.state == WAITING_FOR_STORE) {
+	if (T.state == REQUESTING_STORE_SLOT) {
 		T.responses++;
-	}
-}
-
-void handle_nack(int src, general_msg msg) {
-	if (T.state == WAITING_FOR_STORE) {
-		T.responses++;
-	}
-
-	switch (T.state) {
-		case WAITING_FOR_STORE:
-			T_enter_store(src);
-			break;
-		default:
-			break;
 	}
 }
 
@@ -60,8 +54,7 @@ void handle_waiting_for_store_state() {
 		T.responses = 0;
 		
 		if (T.free_store_slots > 0) {
-			T.clk++;
-			T.state = SHOPPING;
+			T.state = OCCUPYING_STORE_SLOT; 
 			T_enter_store(T.rank);
 			log_info("I'm shopping now!");
 
@@ -76,7 +69,7 @@ void handle_waiting_for_store_state() {
 
 void handle_waiting_for_free_store_slot() {
 	if (T.free_store_slots > 0) {
-		T.state = WAITING_FOR_STORE;
+		T.state = REQUESTING_STORE_SLOT; 
 		enter_store();
 		log_info("Store slots are available again, let's request one!");	
 	}
@@ -94,7 +87,7 @@ void *do_the_shopping(void *arg) {
 	release_store();
 
 	if (T.free_store_slots > 0) {
-		T.state = WAITING_FOR_STORE;
+		T.state = REQUESTING_STORE_SLOT; 
 		enter_store();
 	} else {
 		T.state = WAITING_FOR_FREE_STORE_SLOT;

@@ -101,6 +101,8 @@ void main_event_loop() {
 				&status
 			);
 
+		T.clk++;
+
 		log_info("Message received from %d", status.MPI_SOURCE);
 
 		switch (status.MPI_TAG) {
@@ -116,23 +118,19 @@ void main_event_loop() {
 				log_info("ACK received!");
 				handle_ack(status.MPI_SOURCE, incoming_msg);
 				break;
-			case NACK:
-				log_info("NACK received!");
-				handle_nack(status.MPI_SOURCE, incoming_msg);
-				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
 				break;
 		}
 
 		switch (T.state) {
-			case WAITING_FOR_STORE:
+			case REQUESTING_STORE_SLOT:
 				handle_waiting_for_store_state();
 				break;
 			case WAITING_FOR_FREE_STORE_SLOT:
 				handle_waiting_for_free_store_slot();
-			case SHOPPING:
-				log_info("I'm in the state of shopping!");
+				break;
+			case OCCUPYING_STORE_SLOT:
 				break;
 			default:
 				log_error("Unknown state %d", T.state);
@@ -159,13 +157,13 @@ int main(int argc, char **argv) {
 	print_size_rank();
 
 	// Set initial state.
-	T.state = WAITING_FOR_STORE; 
+	T.state = REQUESTING_STORE_SLOT; 
 
 	// Initialize resources list for storing local bits of information
 	// about other processes.
 	T.res = (world_resources *) malloc(T.size * sizeof(world_resources));
 	for (int i = 1; i < T.size; i++) {
-		world_resources res = {0};
+		world_resources res = {0, 0};
 		T.res[i] = res;
 	}
 
