@@ -44,3 +44,8 @@ void release_store() {
 	general_msg msg = {T.clk};
 	send_to_all(msg, REL_STORE); 
 }
+
+void enter_psychic_req() {
+	general_msg msg = {T.clk};
+	send_to_all(msg, REQ_PSYCHIC);
+}
