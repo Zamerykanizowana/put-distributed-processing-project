@@ -177,8 +177,9 @@ int main(int argc, char **argv) {
 	signal(SIGINT, sigint_handler);
 
 	// Seed random number generator.
-	time_t t;
-	srand((unsigned) time(&t));
+	struct timespec nanos;
+	clock_gettime(CLOCK_MONOTONIC, &nanos);
+	srand(nanos.tv_nsec);
 
 	MPI_Init(&argc, &argv);
 
