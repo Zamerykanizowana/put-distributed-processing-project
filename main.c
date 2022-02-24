@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <time.h>
+#include <string.h>
 #include "log.h"
 #include "tourist.h"
 #include "msg.h"
@@ -108,11 +109,14 @@ void main_event_loop() {
 		//T.clk++;
 		//log_info("Message received from %d", status.MPI_SOURCE);
 		
-		//char tmp[3] = "";
 
-		//if (T.state == WAITING_FOR_PSYCHIC) {
-		//	tmp[3] = "_PS";
-		//}
+		// Allow storing 3 characters + null termination.
+		char aux_log[4] = {'\0'};
+
+		// Differentiate between (N)ACKs for store vs. psychic.
+		if (T.state == WAITING_FOR_PSYCHIC) {
+			strcpy(aux_log, "_PS");
+		}
 
 		switch (status.MPI_TAG) {
 			case REQ_STORE:
@@ -126,13 +130,13 @@ void main_event_loop() {
 				handle_release_store(status.MPI_SOURCE);
 				break;
 			case ACK:
-				log_info("ACK received from %d! Incoming clk %d, my clk %d", 
-					status.MPI_SOURCE, incoming_msg.clk, T.clk);
+				log_info("ACK%s received from %d! Incoming clk %d, my clk %d", 
+					aux_log, status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_ack(status.MPI_SOURCE, incoming_msg);
 				break;
 			case NACK:
-				log_info("NACK received from %d! Incoming clk %d, my clk %d", 
-					status.MPI_SOURCE, incoming_msg.clk, T.clk);
+				log_info("NACK%s received from %d! Incoming clk %d, my clk %d", 
+					aux_log, status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_nack(status.MPI_SOURCE, incoming_msg);
 				break;
 			case REQ_PSYCHIC:
