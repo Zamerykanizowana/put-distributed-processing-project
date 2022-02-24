@@ -1,5 +1,9 @@
 #include <mpi.h>
+#include "msg.h"
+#include "tourist.h"
+#include "log.h"
 
+// Check if sender wins
 // In case of timestamp conflict, lower rank wins.
 int incoming_event_happened_before(int incoming_clk, int incoming_rank) {
 	return (T.clk > incoming_clk || 
