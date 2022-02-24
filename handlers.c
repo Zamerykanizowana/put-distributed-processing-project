@@ -166,7 +166,7 @@ void handle_waiting_for_psychic() {
 		// Save queque to local history
 		// To have info which process entred before
 		for (int i = 1; i < T.size; i++) {
-			T.res_que[i] = T.res_psychic[i];
+			T.res_que[i].psychic_queue = T.res_psychic[i].psychic_claimed;
 		}
 		T_print_local_que();
 		T.responses = 0;
