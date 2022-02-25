@@ -184,6 +184,7 @@ void handle_waiting_for_psychic() {
 			if (T.when_break_needed % T.total_psychic_slots == 0 && T.responses != 0) {
 				T.responses = 0;
 				log_info("Psychic's break 😴");
+				T.state = BREAK;
 				pthread_t break_needed;
 				pthread_create(&break_needed, NULL, do_break, NULL);
 			} else {
@@ -202,6 +203,7 @@ void *do_break(void *arg) {
 	log_info("Break takes %d seconds", duration);
 	sleep(duration);
 	log_info("Break done! 😴✅");
+	T.state = WAITING_FOR_PSYCHIC;
 	handle_trying_to_enter();
 	return NULL;
 }
@@ -228,6 +230,7 @@ void *do_the_trip(void *arg) {
 	sleep(duration);
 	T.state = WAITING_TO_EXIT;
 	log_info("I'm ready to exit tunnel...");
+	handle_wanting_to_exit();
 	return NULL;
 }
 
@@ -243,13 +246,15 @@ void handle_enter(int tourist) {
 }
 
 void handle_wanting_to_exit() {
+	log_info("HERE in handle");
 	int blocker = 0;
 	for (int i = 1; i < T.size; i++) {
 		if (T.res_que[i].psychic_queue == 2) {
 			blocker++;
 		}
 	}
-	if (blocker == 0) {
+	if (blocker == 0 || T.state == WAITING_TO_EXIT) {
+		log_info("HERE");
 		T.clk++;
 		T.state = EXITED;
 		for (int i = 1; i < T.size; i++) {
@@ -263,5 +268,9 @@ void handle_wanting_to_exit() {
 
 void handle_release_psychic(int tourist) {
 	T.res_psychic[tourist].psychic_claimed = -1;
+	T.res_que[tourist].psychic_queue = 0;
+	log_debug("HELO FROM HANDLE");
+	T_print_res_psychic();
+	T_print_local_que();
 
 }
