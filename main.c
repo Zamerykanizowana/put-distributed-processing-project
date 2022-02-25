@@ -105,6 +105,11 @@ void main_event_loop() {
 					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_enter(status.MPI_SOURCE);
 				break;
+			case REL_PSYCHIC:
+				log_info("REL_TUNNEL received form %d! Incoming clk %d, my clk %d",
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
+				handle_release_psychic(status.MPI_SOURCE);
+				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
 				break;
