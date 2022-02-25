@@ -133,6 +133,9 @@ void main_event_loop() {
 				log_info("I want to exit, pls");
 				handle_wanting_to_exit();
 				break;
+			case BREAK:
+				log_info("Ugh... I have to wait till break ends.");
+				break;
 			case EXITED:
 				log_info("I exited from tunel");
 				T.state = WAITING_FOR_STORE;

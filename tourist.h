@@ -6,7 +6,8 @@ typedef enum {
 	SHOPPING,
 	WAITING_FOR_PSYCHIC,
 	TRIPPING, 
-	WAITING_TO_EXIT, 
+	WAITING_TO_EXIT,
+	BREAK,
 	EXITED
 } tourist_state;
 
