@@ -5,7 +5,9 @@ typedef enum {
 	WAITING_FOR_STORE,
 	SHOPPING,
 	WAITING_FOR_PSYCHIC,
-	TRIPPING
+	TRIPPING, 
+	WAITING_TO_EXIT, 
+	EXITED
 } tourist_state;
 
 typedef struct {
