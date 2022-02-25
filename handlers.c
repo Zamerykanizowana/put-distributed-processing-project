@@ -260,3 +260,8 @@ void handle_wanting_to_exit() {
 	}
 	
 }
+
+void handle_release_psychic(int tourist) {
+	T.res_psychic[tourist].psychic_claimed = -1;
+
+}

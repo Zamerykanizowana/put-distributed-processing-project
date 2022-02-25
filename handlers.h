@@ -15,5 +15,6 @@ void handle_waiting_for_psychic();
 void handle_trying_to_enter();
 void handle_enter(int tourist);
 void handle_wanting_to_exit();
+void handle_release_psychic(int tourist);
 
 #endif
