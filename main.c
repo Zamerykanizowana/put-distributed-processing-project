@@ -167,6 +167,12 @@ int main(int argc, char **argv) {
 		T.res_psychic[i] = res_psychic;
 	}
 
+	T.res_que = (local_queue *) malloc(T.size * sizeof(local_queue));
+	for (int i = 1; i < T.size; i++) {
+		local_queue res_queue = {0};
+		T.res_que[i] = res_queue;
+	}
+
 	// Get environment variables.
 	const char *total_store_slots_env = getenv("STORE_SLOTS");
 
