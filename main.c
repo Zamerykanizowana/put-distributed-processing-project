@@ -133,6 +133,10 @@ void main_event_loop() {
 				log_info("I want to exit, pls");
 				handle_wanting_to_exit();
 				break;
+			case EXITED:
+				log_info("I exited from tunel");
+				T.state = WAITING_FOR_STORE;
+				break;
 			default:
 				log_error("Unknown state %d", T.state);
 				break;
