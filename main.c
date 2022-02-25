@@ -100,6 +100,11 @@ void main_event_loop() {
 					status.MPI_SOURCE, incoming_msg.clk, T.clk);
 				handle_req_psychic(status.MPI_SOURCE, incoming_msg);
 				break;
+			case ENTER_TUNNEL:
+				log_info("ENTER_TUNNEL received from %d! Incoming clk %d, my clk %d",
+					status.MPI_SOURCE, incoming_msg.clk, T.clk);
+				handle_enter(status.MPI_SOURCE);
+				break;
 			default:
 				log_error("Unknown message tag %d", status.MPI_TAG);
 				break;
@@ -163,13 +168,13 @@ int main(int argc, char **argv) {
 	// about other pricesses in queque for psychic
 	T.res_psychic = (world_resources_psychic *) malloc(T.size * sizeof(world_resources_psychic));
 	for (int i = 1; i < T.size; i++) {
-		world_resources_psychic res_psychic = {0};
+		world_resources_psychic res_psychic = {-1};
 		T.res_psychic[i] = res_psychic;
 	}
 
 	T.res_que = (local_queue *) malloc(T.size * sizeof(local_queue));
 	for (int i = 1; i < T.size; i++) {
-		local_queue res_queue = {0};
+		local_queue res_queue = {-1};
 		T.res_que[i] = res_queue;
 	}
 
