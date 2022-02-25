@@ -6,6 +6,7 @@ typedef enum {
 	REQ_STORE,
 	REL_STORE,
 	REQ_PSYCHIC,
+	ENTER_TUNNEL,
 	REL_PSYCHIC,
 	ACK,
 	NACK
