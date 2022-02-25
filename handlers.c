@@ -56,7 +56,9 @@ void handle_ack(int src, general_msg msg) {
 			T.res[src].store_claimed = 0;
 			break;
 		case WAITING_FOR_PSYCHIC:
-			//T.res_psychic[src].psychic_claimed = 0;
+			if (T.res_psychic[src].psychic_claimed == -1) {
+				T.res_psychic[src].psychic_claimed = 0;
+			}
 			break;
 		default:
 			break;
@@ -160,24 +162,34 @@ void handle_req_psychic(int src, general_msg msg) {
 }
 
 void handle_waiting_for_psychic() {
-	if (T.responses == T.size - 2) {
+	if (T.responses == T.size - 2 || T.res_que[T.rank].psychic_queue != -1 ) {
 		log_info("I have all responses about psychic!");
+		T.res_psychic[T.rank].psychic_claimed = 0;
 		// Save queque to local history
 		// To have info which process entred before
-		for (int i = 1; i < T.size; i++) {
-			T.res_que[i].psychic_queue = T.res_psychic[i].psychic_claimed;
+		if (T.responses != 0) {
+			for (int i = 1; i < T.size; i++) {
+				T.res_que[i].psychic_queue = T.res_psychic[i].psychic_claimed;
+			}
 		}
 		T_print_local_que();
-		T.responses = 0;
-		T.clk++;
-		//T_enter_psychic(T.rank) ??
+		//T.responses = 0;
+		//T.clk++;
+		//T_enter_psychic(T.rank) ?? - nope
 		log_info("My state of wbn: %d", T.when_break_needed);
 		if (T.when_break_needed == 0) {
-			log_info("Psychic's break 😴");
-			pthread_t break_needed;
-			pthread_create(&break_needed, NULL, do_break, NULL);
+			T.responses = 0;
+			handle_trying_to_enter();
 		} else {
-			handle_waiting_for_trip();
+			if (T.when_break_needed % T.total_psychic_slots == 0 && T.responses != 0) {
+				T.responses = 0;
+				log_info("Psychic's break 😴");
+				pthread_t break_needed;
+				pthread_create(&break_needed, NULL, do_break, NULL);
+			} else {
+				T.responses = 0;
+				handle_trying_to_enter();
+			}
 		}
 	} else {
 		log_info("I have only %d responses about psychic...", T.responses);
@@ -190,14 +202,24 @@ void *do_break(void *arg) {
 	log_info("Break takes %d seconds", duration);
 	sleep(duration);
 	log_info("Break done! 😴✅");
-	handle_waiting_for_trip();
+	handle_trying_to_enter();
 	return NULL;
 }
 
-void handle_waiting_for_trip() {
-	T.state = TRIPPING;
-	pthread_t trip_fan;
-	pthread_create(&trip_fan, NULL, do_the_trip, NULL);
+void handle_trying_to_enter() {
+	int blocker = 0;
+	for (int i = 1; i < T.size; i++) {
+		if (T.res_que[i].psychic_queue == 1) {
+			blocker++;
+		}
+	}
+	if (blocker == 0) {
+		T.clk++;
+		T.state = TRIPPING;
+		enter_psychic();
+		pthread_t trip_fan;
+		pthread_create(&trip_fan, NULL, do_the_trip, NULL);
+	}
 } 
 
 void *do_the_trip(void *arg) {
@@ -208,6 +230,15 @@ void *do_the_trip(void *arg) {
 	return NULL;
 }
 
+void handle_enter(int tourist) {
+	if (T.res_que[tourist].psychic_queue == 1) {
+		T.res_que[tourist].psychic_queue = 2;
+	}
+	T.res_psychic[tourist].psychic_claimed = 2;
+	log_info("Handle entering tourist no. %d", tourist);
+	T_print_res_psychic();
+	T_print_local_que;
 
+}
 
 
