@@ -253,7 +253,7 @@ void handle_wanting_to_exit() {
 			blocker++;
 		}
 	}
-	if (blocker == 0 || T.state == WAITING_TO_EXIT) {
+	if (blocker == 0 && T.state == WAITING_TO_EXIT) {
 		log_info("HERE");
 		T.clk++;
 		T.state = EXITED;
