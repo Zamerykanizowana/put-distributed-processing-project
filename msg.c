@@ -52,5 +52,5 @@ void enter_psychic_req() {
 
 void enter_psychic() {
 	general_msg msg = {T.clk};
-	sent_to_all(msg, ENTER_TUNNEL);
+	send_to_all(msg, ENTER_TUNNEL);
 }

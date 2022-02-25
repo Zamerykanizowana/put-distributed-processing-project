@@ -22,4 +22,5 @@ void print_size_rank();
 void enter_store_req();
 void release_store();
 void enter_psychic_req();
+void enter_psychic();
 #endif

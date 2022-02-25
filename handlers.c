@@ -237,7 +237,7 @@ void handle_enter(int tourist) {
 	T.res_psychic[tourist].psychic_claimed = 2;
 	log_info("Handle entering tourist no. %d", tourist);
 	T_print_res_psychic();
-	T_print_local_que;
+	T_print_local_que();
 
 }
 
