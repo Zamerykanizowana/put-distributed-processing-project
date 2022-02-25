@@ -195,7 +195,8 @@ int main(int argc, char **argv) {
 
 	// Initialize free slots.
 	T.free_store_slots = T.total_store_slots;
-	T.when_break_needed = T.total_psychic_slots;
+	T.when_break_needed = 0;
+
 
 	log_add_callback(kill_everyone, NULL, LOG_ERROR);
 

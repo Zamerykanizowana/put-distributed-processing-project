@@ -56,7 +56,7 @@ void handle_ack(int src, general_msg msg) {
 			T.res[src].store_claimed = 0;
 			break;
 		case WAITING_FOR_PSYCHIC:
-			T.res_psychic[src].psychic_claimed = 0;
+			//T.res_psychic[src].psychic_claimed = 0;
 			break;
 		default:
 			break;
@@ -114,13 +114,12 @@ void *do_the_shopping(void *arg) {
 
 	log_info("I'll spend %d seconds in the store", duration);
 	sleep(duration);
+	T.state = WAITING_FOR_PSYCHIC;
 	log_info("Shopping done! 🏪✅");
-
+	
 	T_leave_store(T.rank);
 
 	release_store();
-
-	T.state = WAITING_FOR_PSYCHIC;
 
 	enter_psychic_req();
 
@@ -172,6 +171,7 @@ void handle_waiting_for_psychic() {
 		T.responses = 0;
 		T.clk++;
 		//T_enter_psychic(T.rank) ??
+		log_info("My state of wbn: %d", T.when_break_needed);
 		if (T.when_break_needed == 0) {
 			log_info("Psychic's break 😴");
 			pthread_t break_needed;
