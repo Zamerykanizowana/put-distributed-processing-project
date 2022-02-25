@@ -57,5 +57,5 @@ void enter_psychic() {
 
 void release_psychic() {
 	general_msg msg = {T.clk};
-	send_to_all(msg, REL_TUNNEL);
+	send_to_all(msg, REL_PSYCHIC);
 }
