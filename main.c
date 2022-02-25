@@ -124,6 +124,10 @@ void main_event_loop() {
 			case TRIPPING:
 				log_info("I'm surfing through the tunnel! 🏄");
 				break;
+			case WAITING_TO_EXIT:
+				log_info("I want to exit, pls");
+				handle_wanting_to_exit();
+				break;
 			default:
 				log_error("Unknown state %d", T.state);
 				break;
