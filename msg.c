@@ -54,3 +54,8 @@ void enter_psychic() {
 	general_msg msg = {T.clk};
 	send_to_all(msg, ENTER_TUNNEL);
 }
+
+void release_psychic() {
+	general_msg msg = {T.clk};
+	send_to_all(msg, REL_TUNNEL);
+}
