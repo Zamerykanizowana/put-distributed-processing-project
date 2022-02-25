@@ -139,6 +139,7 @@ void main_event_loop() {
 			case EXITED:
 				log_info("I exited from tunel");
 				T.state = WAITING_FOR_STORE;
+				enter_store_req();
 				break;
 			default:
 				log_error("Unknown state %d", T.state);

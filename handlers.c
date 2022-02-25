@@ -132,7 +132,8 @@ void handle_req_psychic(int src, general_msg msg) {
 	int tag;
 
 	if (T.state == WAITING_FOR_PSYCHIC) {
-		if (incoming_event_happened_before(msg.clk, src)) {
+		if (incoming_event_happened_before(msg.clk, src) && 
+				T.res_psychic[src].psychic_claimed != 0) {
 			tag = ACK;
 			log_info("Sending ACK_PSYCHIC to %d. My clk is %d, my st is %d", 
 					src, T.clk, T.state);
@@ -141,6 +142,9 @@ void handle_req_psychic(int src, general_msg msg) {
 			tag = NACK;
 			log_info("Sending NACK_PSYCHIC to %d. My clk is %d, my st is %d", 
 					src, T.clk, T.state);
+			if (T.res_psychic[src].psychic_claimed == -1) {
+				T.res_psychic[src].psychic_claimed = 0;
+			}
 		}
 	} else {
 		tag = ACK;
@@ -204,7 +208,10 @@ void *do_break(void *arg) {
 	sleep(duration);
 	log_info("Break done! 😴✅");
 	T.state = WAITING_FOR_PSYCHIC;
-	handle_trying_to_enter();
+	while (T.state == WAITING_FOR_PSYCHIC) {
+		handle_trying_to_enter();
+		sleep(1);
+	}
 	return NULL;
 }
 
@@ -230,6 +237,7 @@ void *do_the_trip(void *arg) {
 	sleep(duration);
 	T.state = WAITING_TO_EXIT;
 	log_info("I'm ready to exit tunnel...");
+	T_print_local_que();
 	handle_wanting_to_exit();
 	return NULL;
 }
@@ -262,7 +270,10 @@ void handle_wanting_to_exit() {
 		}
 		release_psychic();
 
-	}
+	} //else {
+	//	sleep(2);
+	//	handle_wanting_to_exit();
+	//}
 	
 }
 
