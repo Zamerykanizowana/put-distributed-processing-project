@@ -226,6 +226,7 @@ void *do_the_trip(void *arg) {
 	int duration = (rand() % (10 - 1 + 1)) + 1;
 	log_info("I want to spend %d seconds in tunnel", duration);
 	sleep(duration);
+	T.state = WAITING_TO_EXIT;
 	log_info("I'm ready to exit tunnel...");
 	return NULL;
 }
@@ -241,4 +242,21 @@ void handle_enter(int tourist) {
 
 }
 
+void handle_wanting_to_exit() {
+	int blocker = 0;
+	for (int i = 1; i < T.size; i++) {
+		if (T.res_que[i].psychic_queue == 2) {
+			blocker++;
+		}
+	}
+	if (blocker == 0) {
+		T.clk++;
+		T.state = EXITED;
+		for (int i = 1; i < T.size; i++) {
+			T.res_que[i].psychic_queue = -1;
+		}
+		release_psychic();
 
+	}
+	
+}
